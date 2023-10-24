@@ -21,6 +21,8 @@ const imageUrls = [
   "/tile8.png",
 ];
 
+let active = false;
+
 //defining the size of the main grid
 const numTiles = 32;
 const tileSize = gridCanvas.width / numTiles;
@@ -41,7 +43,7 @@ for (let i = 0; i < numTiles; i++) {
 }
 
 //track the selected tile
-let currentTile = "/tile1.png";
+let currentTile = 0;
 
 //draw the initial canvases
 redrawTilemap();
@@ -84,12 +86,40 @@ function redrawTilemap() {
   }
 }
 
-gridCanvas.addEventListener("click", (e) => {
+gridCanvas.addEventListener("mousedown", (e) => {
+  const coordX = Math.trunc(e.offsetX / tileSize);
+  const coordY = Math.trunc(e.offsetY / tileSize);
+  active = true;
+  tilemap[coordX][coordY] = currentTile;
+  drawTexture(
+    coordX,
+    coordY,
+    gridCtx,
+    currentTile,
+    gridCanvas.width / numTiles,
+    gridCanvas.height / numTiles,
+    tileSize
+  );
+});
+gridCanvas.addEventListener("mousemove", (e) => {
   const coordX = Math.trunc(e.offsetX / tileSize);
   const coordY = Math.trunc(e.offsetY / tileSize);
 
-  tilemap[coordX][coordY].src = currentTile;
-  redrawTilemap();
+  tilemap[coordX][coordY] = currentTile;
+  if (active) {
+    drawTexture(
+      coordX,
+      coordY,
+      gridCtx,
+      currentTile,
+      gridCanvas.width / numTiles,
+      gridCanvas.height / numTiles,
+      tileSize
+    );
+  }
+});
+gridCanvas.addEventListener("mouseup", () => {
+  active = false;
 });
 
 // ----- Interacting with the selectable tilemap -----
@@ -97,21 +127,11 @@ gridCanvas.addEventListener("click", (e) => {
 // Loop through the selectable tiles and draw textures in each cell
 function drawSelectCanvas() {
   for (let i = 0; i < numSelectables; i++) {
-    const selectableImage = new Image();
-    selectableImage.src = imageUrls[i];
-    drawTexture(
-      0,
-      i,
-      selectCtx,
-      selectableImage,
-      selectCanvas.width,
-      selectHeight,
-      64
-    );
+    drawTexture(0, i, selectCtx, i, selectCanvas.width, selectHeight, 64);
   }
 }
 
 selectCanvas.addEventListener("click", (e) => {
   const coordY = Math.trunc(e.offsetY / selectHeight);
-  currentTile = imageUrls[coordY];
+  currentTile = coordY;
 });
