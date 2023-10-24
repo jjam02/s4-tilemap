@@ -4,3 +4,7 @@
 canvas {
   border: 5px solid #000;
 }
+
+#selected {
+  border: 5px solid red;
+}
