@@ -42,7 +42,7 @@ for (let i = 0; i < numTiles; i++) {
   tilemap[i] = row;
 }
 
-//track the selected tile
+//track the selected tiles
 let currentTile = 0;
 
 //draw the initial canvases
